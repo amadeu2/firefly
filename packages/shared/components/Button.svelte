@@ -21,6 +21,11 @@
     export let autofocus = false
     export let inlineStyle = ''
     export let showHoverText = undefined
+    export let mobile
+    export let onlyIcon
+    export let reverse
+    export let shadow
+    export let tab
 
     let buttonElement
     $: darkModeEnabled = $appSettings.darkMode
@@ -265,6 +270,40 @@
                 }
             }
         }
+        &.mobile {
+            @apply bg-gray-50;
+            min-width: 44px;
+            min-height: 44px;
+            width: 44px;
+            height: 44px;
+            padding: 14px;
+            border: 0;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            &.darkmode {
+                @apply bg-gray-900;
+            }
+
+            &.reverse {
+                @apply bg-white;
+                &.darkmode {
+                    @apply bg-gray-700;
+                }
+            }
+        }
+        &.shadow {
+            --opts: 0px 5px 8px;
+            box-shadow: var(--opts) rgba(127,127,127,.1);
+            &.darkmode {
+                box-shadow: var(--opts) rgba(0,0,0,.3);
+            }
+        }
+        &.tab {
+            min-width: 44px;
+            min-height: 32px;
+            @apply bg-gray-900;
+            @apply p-0;
+            margin: 0 1rem;
+        }
         &.xl {
             min-width: 100px;
             &:not(:disabled),
@@ -358,6 +397,10 @@
         class:active
         class:darkmode={darkModeEnabled}
         class:showHoverText
+        class:mobile
+        class:reverse
+        class:shadow
+        class:tab
         style={inlineStyle}
         {disabled}
         bind:this={buttonElement}>
@@ -386,6 +429,8 @@
                         </div>
                     </div>
                 {/if}
+            {:else if onlyIcon}
+                <Icon  width="16" height="16" {icon} />
             {:else}
                 <div class="relative flex flex-row justify-between">
                     <div class="relative flex items-center flex-1">

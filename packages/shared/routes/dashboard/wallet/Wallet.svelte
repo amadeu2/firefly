@@ -41,6 +41,7 @@
     import { Account, CreateAccount, LineChart, Security, WalletActions, WalletBalance, WalletHistory } from './views/'
 
     export let locale
+    export let mobile
 
     const { accounts, balanceOverview, accountsLoaded, internalTransfersInProgress } = $wallet
 
@@ -588,39 +589,78 @@
         generateAddress={onGenerateAddress}
         {locale} />
 {:else}
-    <div class="wallet-wrapper w-full h-full flex flex-col p-10 flex-1 bg-gray-50 dark:bg-gray-900">
-        <div class="w-full h-full grid grid-cols-3 gap-x-4 min-h-0">
-            <DashboardPane classes="h-full">
-                <!-- Total Balance, Accounts list & Send/Receive -->
-                <div class="flex flex-auto flex-col h-full">
-                    {#if $walletRoute === WalletRoutes.CreateAccount}
-                        <CreateAccount onCreate={onCreateAccount} {locale} />
-                    {:else}
-                        <WalletBalance {locale} />
-                        <DashboardPane classes="-mt-5 h-full z-0">
+    {#if mobile}
+        <div class="wallet-wrapper w-full h-full flex flex-col flex-1 bg-gray-50 dark:bg-gray-900">
+            <div class="w-full h-full grid grid-cols-1 min-h-0">
+                <!-- <DashboardPane classes="h-full"> -->
+                    <!-- Total Balance, Accounts list & Send/Receive -->
+                    <div class="flex flex-auto flex-col w-full">
+                        {#if $walletRoute === WalletRoutes.CreateAccount}
+                            <CreateAccount onCreate={onCreateAccount} {locale} />
+                        {:else}
+                            <WalletBalance {locale} mobile />
+                            <!-- <DashboardPane classes="-mt-5 h-full z-0"> -->
                             <WalletActions
                                 {isGeneratingAddress}
                                 send={onSend}
                                 internalTransfer={onInternalTransfer}
                                 generateAddress={onGenerateAddress}
-                                {locale} />
+                                {locale}
+                                mobile />
+                            <!-- </DashboardPane> -->
+                        {/if}
+                    </div>
+                <!-- </DashboardPane> -->
+                <div class="flex flex-col col-span-2 h-full space-y-4">
+                    <!-- <DashboardPane classes="w-full h-1/2">
+                        <LineChart {locale} />
+                    </DashboardPane> -->
+                    <div class="w-full h-1/2 flex flex-row flex-1 space-x-4">
+                        <DashboardPane classes="w-full">
+                            <WalletHistory {locale} mobile />
                         </DashboardPane>
-                    {/if}
-                </div>
-            </DashboardPane>
-            <div class="flex flex-col col-span-2 h-full space-y-4">
-                <DashboardPane classes="w-full h-1/2">
-                    <LineChart {locale} />
-                </DashboardPane>
-                <div class="w-full h-1/2 flex flex-row flex-1 space-x-4">
-                    <DashboardPane classes="w-1/2">
-                        <WalletHistory {locale} />
-                    </DashboardPane>
-                    <DashboardPane classes="w-1/2">
-                        <Security {locale} />
-                    </DashboardPane>
+                        <!-- <DashboardPane classes="w-1/2">
+                            <Security {locale} />
+                        </DashboardPane> -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {:else}
+        <div class="wallet-wrapper w-full h-full flex flex-col p-10 flex-1 bg-gray-50 dark:bg-gray-900">
+            <div class="w-full h-full grid grid-cols-3 gap-x-4 min-h-0">
+                <DashboardPane classes="h-full">
+                    <!-- Total Balance, Accounts list & Send/Receive -->
+                    <div class="flex flex-auto flex-col w-full">
+                        {#if $walletRoute === WalletRoutes.CreateAccount}
+                            <CreateAccount onCreate={onCreateAccount} {locale} />
+                        {:else}
+                            <WalletBalance {locale} />
+                            <DashboardPane classes="-mt-5 h-full z-0">
+                                <WalletActions
+                                    {isGeneratingAddress}
+                                    send={onSend}
+                                    internalTransfer={onInternalTransfer}
+                                    generateAddress={onGenerateAddress}
+                                    {locale} />
+                            </DashboardPane>
+                        {/if}
+                    </div>
+                </DashboardPane>
+                <div class="flex flex-col col-span-2 h-full space-y-4">
+                    <DashboardPane classes="w-full h-1/2">
+                        <LineChart {locale} />
+                    </DashboardPane>
+                    <div class="w-full h-1/2 flex flex-row flex-1 space-x-4">
+                        <DashboardPane classes="w-1/2">
+                            <WalletHistory {locale} />
+                        </DashboardPane>
+                        <DashboardPane classes="w-1/2">
+                            <Security {locale} />
+                        </DashboardPane>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
 {/if}

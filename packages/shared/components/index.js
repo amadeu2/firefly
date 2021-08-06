@@ -48,6 +48,8 @@ export { default as TitleBar } from './TitleBar.svelte'
 export { default as ButtonRadio } from './ButtonRadio.svelte'
 export { default as ButtonCheckbox } from './ButtonCheckbox.svelte'
 export { default as Animation } from './Animation.svelte'
+export { default as TransactionTabs } from './TransactionTabs.svelte'
+export { default as Drawer } from './Drawer.svelte'
 
 export * from './modals'
 // Charts

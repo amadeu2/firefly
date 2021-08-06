@@ -13,13 +13,17 @@
     "ios:update": "cap sync ios && cap open ios",
     "android": "cap copy android && cap open android",
     "android:update": "cap sync android && cap open android",
-    "dev": "NODE_ENV=development webpack serve --content-base public --host 0.0.0.0 --client-log-level none"
+    "android:install": "cap copy android && cd android && gradlew installDebug && gradlew installDebug",
+    "dev": "NODE_ENV=development webpack serve --content-base public --host 0.0.0.0 --client-log-level none",
+    "dev:mobile": "NODE_ENV=development webpack"
   },
   "devDependencies": {
     "@capacitor/android": "2.2.1",
     "@capacitor/cli": "^2.2.1",
     "@capacitor/core": "2.2.1",
     "@capacitor/ios": "2.2.1",
+    "@tailwindcss/jit": "^0.1.18",
+    "esbuild-loader": "^2.13.1",
     "mini-css-extract-plugin": "^1.6.0",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.2",

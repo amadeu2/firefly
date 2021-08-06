@@ -1,5 +1,5 @@
 <script lang="typescript">
-    import { Idle, Sidebar } from 'shared/components'
+    import { Idle, Sidebar, Drawer } from 'shared/components'
     import { loggedIn, logout, sendParams } from 'shared/lib/app'
     import { appSettings } from 'shared/lib/appSettings'
     import { deepLinkRequestActive } from 'shared/lib/deepLinking'
@@ -23,7 +23,14 @@
         wallet: Wallet,
         settings: Settings,
     }
-
+    const drawer_menu = {
+		amount: 4,
+		id: 1, // Defines place of button, based on amount
+		icon_size: 162,
+		icon: 'wallet',
+		height: 60,
+		marginTop: 20,
+	};
     const { accountsLoaded } = $wallet
 
     let startInit
@@ -38,31 +45,31 @@
     });
 
     onMount(async () => {
-        api.setStrongholdPasswordClearInterval({ secs: STRONGHOLD_PASSWORD_CLEAR_INTERVAL_SECS, nanos: 0 })
+        //api.setStrongholdPasswordClearInterval({ secs: STRONGHOLD_PASSWORD_CLEAR_INTERVAL_SECS, nanos: 0 })
 
         // TODO: Re-enable deep links
         // Electron.DeepLinkManager.requestDeepLink()
         // Electron.onEvent('deep-link-params', (data) => handleDeepLinkRequest(data))
 
-        Electron.onEvent('menu-logout', () => {
-            logout()
-        })
+        // Electron.onEvent('menu-logout', () => {
+        //     logout()
+        // })
 
-        Electron.onEvent('notification-activated', (contextData) => {
-            if (contextData) {
-                if (
-                    (contextData.type === 'confirmed' || contextData.type === 'failed' || contextData.type === 'valueTx') &&
-                    contextData.accountId
-                ) {
-                    selectedAccountId.set(contextData.accountId)
-                    if (get(dashboardRoute) !== Tabs.Wallet) {
-                        dashboardRoute.set(Tabs.Wallet)
-                    }
-                    walletRoute.set(WalletRoutes.Account)
-                    accountRoute.set(AccountRoutes.Init)
-                }
-            }
-        })
+        // Electron.onEvent('notification-activated', (contextData) => {
+        //     if (contextData) {
+        //         if (
+        //             (contextData.type === 'confirmed' || contextData.type === 'failed' || contextData.type === 'valueTx') &&
+        //             contextData.accountId
+        //         ) {
+        //             selectedAccountId.set(contextData.accountId)
+        //             if (get(dashboardRoute) !== Tabs.Wallet) {
+        //                 dashboardRoute.set(Tabs.Wallet)
+        //             }
+        //             walletRoute.set(WalletRoutes.Account)
+        //             accountRoute.set(AccountRoutes.Init)
+        //         }
+        //     }
+        // })
 
         if ($activeProfile?.migratedTransactions?.length) {
             await pollChrysalisStatus()
@@ -205,7 +212,20 @@
 </script>
 
 {#if mobile}
-    <div>foo</div>
+    <!-- <Idle /> -->
+    <div class="flex flex-row w-full h-full">
+        <!-- <Sidebar {locale} /> -->
+        <!-- Dashboard Pane -->
+        <svelte:component this={tabs[$dashboardRoute]} {locale} on:next={routerNext} {mobile} />
+    </div>
+    <!-- <Drawer config={drawer_menu} opened={true}>
+        <div class="p-5 overflow-y-scroll h-full scroll-secondary">Leonardo da Vinci[b] (15 April 1452 – 2 May 1519) was an Italian polymath of the High Renaissance who was active as a painter, draughtsman, engineer, scientist, theorist, sculptor and architect.[3] While his fame initially rested on his achievements as a painter, he also became known for his notebooks, in which he made drawings and notes on a variety of subjects, including anatomy, astronomy, botany, cartography, painting, and paleontology. Leonardo's genius epitomized the Renaissance humanist ideal,[4] and his collective works compose a contribution to later generations of artists matched only by that of his younger contemporary, Michelangelo.[3][4]
+
+            Born out of wedlock to a successful notary and a lower-class woman in, or near, Vinci, he was educated in Florence by the renowned Italian painter and sculptor Andrea del Verrocchio. He began his career in the city, but then spent much time in the service of Ludovico Sforza in Milan. Later, he worked in Florence and Milan again, as well as briefly in Rome, all while attracting a large following of imitators and students. Upon the invitation of Francis I, he spent his last three years in France, where he died in 1519. Since his death, there has not been a time where his achievements, diverse interests, personal life, and empirical thinking have failed to incite interest and admiration,[3][4] making him a frequent namesake and subject in culture.
+            
+            Leonardo is among the greatest painters in the history of art and is often credited as the founder of the High Renaissance.[3] Despite having many lost works and less than 25 attributed major works—including numerous unfinished works—he created some of the most influential paintings in Western art.[3] His magnum opus, the Mona Lisa, is his best known work and often regarded as the world's most famous painting. The Last Supper is the most reproduced religious painting of all time and his Vitruvian Man drawing is also regarded as a cultural icon. In 2017, Salvator Mundi, attributed in whole or part to Leonardo,[5] was sold at auction for US$450.3 million, setting a new record for the most expensive painting ever sold at public auction.
+        </div>
+    </Drawer> -->
 {:else}
     <Idle />
     <div class="flex flex-row w-full h-full">

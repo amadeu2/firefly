@@ -25,7 +25,7 @@
     } from 'shared/routes'
     import { onMount } from 'svelte'
 
-    $mobile = true
+    mobile.set(true)
     
     $: $appSettings.darkMode ? document.body.classList.add('scheme-dark') : document.body.classList.remove('scheme-dark')
 
@@ -41,7 +41,7 @@
             splash = false
             // changed temporarily by the sake of demonstration purposes
             //initRouter()
-            setRoute(AppRoute.Protect)
+            setRoute(AppRoute.Dashboard)
         }, 2000)
 
         await fetchMarketData()
@@ -85,7 +85,7 @@
 <!-- empty div to avoid auto-purge removing dark classes -->
 <div class="scheme-dark" />
 {#if !$isLocaleLoaded || splash}
-    <Splash />
+    <Splash mobile />
 {:else}
     <!-- dummy toggles -->
     <div class="dummy-toggles flex flex-row">
@@ -96,43 +96,43 @@
     </div>
     <!--  -->
     <Route route={AppRoute.Welcome}>
-        <Welcome on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Welcome on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Legal}>
-        <Legal on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Legal on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Settings}>
-        <Settings on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Settings on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Setup}>
-        <Setup on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Setup on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Password}>
-        <Password on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Password on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Protect} transition={false}>
-        <Protect on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Protect on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Backup} transition={false}>
         <Backup
             on:next={routerNext}
             on:previous={routerPrevious}
-            mobile={$mobile}
+            mobile
             locale={$_} />
     </Route>
     <Route route={AppRoute.Import} transition={false}>
-        <Import on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Import on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Balance}>
-        <Balance on:next={routerNext} on:previous={routerPrevious} mobile={$mobile} locale={$_} />
+        <Balance on:next={routerNext} on:previous={routerPrevious} mobile locale={$_} />
     </Route>
     <Route route={AppRoute.Migrate}>
-        <Migrate on:next={routerNext} mobile={$mobile} locale={$_} {goto} />
+        <Migrate on:next={routerNext} mobile locale={$_} {goto} />
     </Route>
     <Route route={AppRoute.Congratulations}>
-        <Congratulations on:next={routerNext} mobile={$mobile} locale={$_} {goto} />
+        <Congratulations on:next={routerNext} mobile locale={$_} {goto} />
     </Route>
     <Route route={AppRoute.Dashboard}>
-        <Dashboard mobile={$mobile} locale={$_} {goto} />
+        <Dashboard mobile locale={$_} {goto} />
     </Route>
 {/if}

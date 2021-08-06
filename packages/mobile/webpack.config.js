@@ -23,7 +23,7 @@ const resolve = {
 
 /// ------------------------ Output ------------------------
 const output = {
-    publicPath: prod ? '../' : '/',
+    //publicPath: prod ? '../' : '/',
     path: path.join(__dirname, '/public'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
@@ -33,7 +33,16 @@ const output = {
 const rendererRules = [
     {
         test: /\.ts$/,
-        loader: 'ts-loader',
+        loader: 'esbuild-loader',
+        //loader: prod ? 'ts-loader' : 'esbuild-loader',
+        // options: !prod && {
+        //     loader: 'ts',
+        //     target: 'esnext',
+        // },
+        options: {
+            loader: 'ts',
+            target: 'esnext',
+        },
         exclude: /node_modules/,
     },
     {

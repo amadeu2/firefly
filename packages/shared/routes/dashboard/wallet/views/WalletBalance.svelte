@@ -10,6 +10,7 @@
 
     export let locale
     export let color = 'blue' // TODO: profiles will have different colors
+    export let mobile
 
     $: darkModeEnabled = $appSettings.darkMode
     $: waitingChrysalis = $activeProfile?.migratedTransactions?.length
@@ -32,6 +33,9 @@
         &.compressed {
             padding-top: 32px;
         }
+        &.mobile {
+            padding-bottom: 0px;
+        }
         .bg-pattern {
             min-height: 234px;
             z-index: -1;
@@ -42,29 +46,37 @@
             @apply object-cover;
             @apply top-0;
             @apply left-0;
+
+            &.mobile {
+                display: none;
+            }
         }
     }
 </style>
 
 <wallet-balance
     class="relative z-0 bg-gradient-to-b from-{color}-500 to-{color}-600 dark:from-gray-800 dark:to-gray-900 rounded-t-xl px-8"
-    class:compressed={$walletRoute !== WalletRoutes.Init}>
+    class:compressed={$walletRoute !== WalletRoutes.Init}
+    class:mobile>
     <!-- Balance -->
     <div data-label="total-balance" class="flex flex-col flex-wrap space-y-5">
-        <p class="text-11 leading-120 text-white uppercase tracking-widest">{locale('general.balance')}</p>
-        <div class="flex flex-row justify-between items-end">
-            <p class="text-28 leading-120 text-white font-600">{$balance.balance}</p>
-            <p class="text-12 leading-140 text-white font-600">{$balance.balanceFiat}</p>
+        {#if !mobile}
+            <p class="text-11 leading-120 text-white uppercase tracking-widest">{locale('general.balance')}</p>
+        {/if}
+        <div class="flex flex-{mobile ? 'col justify-end items-start' : 'row justify-between items-end'}">
+            <p class="text-28 leading-120 {mobile ? 'text-black dark:text-white' : 'text-white'} font-600">{$balance.balance}</p>
+            <p class="text-12 leading-140 {mobile ? 'text-gray-500' : 'text-white'} font-600">{$balance.balanceFiat}</p>
         </div>
     </div>
     <img
         class="bg-pattern"
+        class:mobile
         width="100%"
         height="auto"
         src={`assets/patterns/${darkModeEnabled ? 'wallet-balance-darkmode.svg' : 'wallet-balance.svg'}`}
         alt="" />
     {#if $walletRoute === WalletRoutes.Init}
-        {#if $accounts.length > 0}
+        <!-- {#if $accounts.length > 0} 🛑 unhide here! -->
             <!-- Action Send / Receive -->
             <div class="flex flex-row justify-between space-x-4 mt-7 mb-3">
                 <Button disabled={waitingChrysalis} medium secondary classes="w-full" onClick={handleReceiveClick}>
@@ -74,6 +86,6 @@
                     {locale('actions.send')}
                 </Button>
             </div>
-        {/if}
+        <!-- {/if} -->
     {/if}
 </wallet-balance>
