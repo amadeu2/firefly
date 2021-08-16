@@ -9,6 +9,7 @@
     import { get } from 'svelte/store'
 
     export let locale
+    export let mobile
 
     let showNetwork = false
     let healthStatus = 2
@@ -50,7 +51,18 @@
     }
 </style>
 
-<aside
+{#if mobile}
+<!-- TODO:
+    ✔ change onclick acttion
+    ✔ add horizontal drawer and go to settings route
+-->
+    <button
+        class="absolute top-10 right-8 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-{profileColor}-500 leading-100"
+        on:click={() => (showProfile = true)}>
+        <span class="text-12 text-center text-white uppercase">{profileInitial || 'A'}</span>
+    </button>
+{:else}
+    <aside
     class="flex flex-col justify-center items-center bg-white dark:bg-gray-800 h-screen relative w-20 px-5 pb-9 pt-9 border-solid border-r border-gray-100 dark:border-gray-800">
     <Logo classes="logo mb-9 {hasTitleBar ? 'mt-3' : ''}" width="48px" logo="logo-firefly" />
     <nav class="flex flex-grow flex-col items-center justify-between">
@@ -70,4 +82,5 @@
     </nav>
     <NetworkIndicator bind:isActive={showNetwork} {locale} />
     <ProfileActionsModal bind:isActive={showProfile} {locale} {openSettings} />
-</aside>
+    </aside>
+{/if}

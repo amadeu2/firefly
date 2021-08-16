@@ -46,7 +46,6 @@
                 </div>
                 <Dropdown
                     valueKey={'alias'}
-                    value={selectedAccount.alias}
                     items={$liveAccounts}
                     onSelect={handleDropdownSelect}
                     disabled={$liveAccounts.length === 1} />
@@ -63,11 +62,11 @@
                 </button>
             </div>
             <div class="flex flex-auto items-center justify-center mb-4">
-                <QR size={98} data={selectedAccount.depositAddress} />
+                <!-- <QR size={98} data={selectedAccount.depositAddress} /> -->
             </div>
             <div class="mb-6">
                 <Text secondary smaller classes="mb-1">{locale('general.myAddress')}</Text>
-                <Text type="pre">{selectedAccount.depositAddress}</Text>
+                <!-- <Text type="pre">{selectedAccount.depositAddress}</Text> -->
             </div>
             <Button disabled={isGeneratingAddress} classes="w-full" onClick={() => setClipboard(selectedAccount.depositAddress)}>
                 {locale('general.copyAddress')}

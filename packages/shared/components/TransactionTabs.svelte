@@ -28,18 +28,18 @@
     ul { 
         --offset: 1px;
 		--button-count: 3;
-		--button-width: 5rem;
-        --button-height: 1.6rem;
+		--button-width: max(23vw, calc(65vw / var(--button-count)));
+        --button-height: 30px;
         border-width: calc(var(--offset) * var(--button-count));
         border-color: rgba(0,0,0,0);
         border-style: solid;
-        box-sizing: content-box;
+        // box-sizing: content-box;
 	}
     
     // ul li#tab1.selected ~ #check-square { left: 0 }
     // ul li#tab2.selected ~ #check-square { left: var(--button-width) }
     // ul li#tab3.selected ~ #check-square { left: calc(var(--button-width) * 2) }
-    $tabs: 1, 2, 3;
+    $tabs: (1, 2, 3);
     @each $tab in $tabs {
         ul li#tab#{$tab}.selected ~ #check-square { 
             left: calc(var(--button-width) * #{$tab - 1});

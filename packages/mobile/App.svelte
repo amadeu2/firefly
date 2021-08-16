@@ -69,7 +69,8 @@
         top: 5px;
         z-index: 10;
         font-size: 12px;
-        display: flex;
+        // display: flex;
+        display: none;
         padding: 5px;
         background: #8080803d;
         border-radius: 10px;

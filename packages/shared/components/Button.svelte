@@ -272,11 +272,11 @@
         }
         &.mobile {
             @apply bg-gray-50;
-            min-width: 44px;
-            min-height: 44px;
-            width: 44px;
-            height: 44px;
-            padding: 14px;
+            min-width: 36px;
+            min-height: 36px;
+            width: 36px;
+            height: 36px;
+            padding: 10px;
             border: 0;
             -webkit-tap-highlight-color: rgba(0,0,0,0);
             &.darkmode {
@@ -430,7 +430,7 @@
                     </div>
                 {/if}
             {:else if onlyIcon}
-                <Icon  width="16" height="16" {icon} />
+                <Icon width="16" height="16" {icon} />
             {:else}
                 <div class="relative flex flex-row justify-between">
                     <div class="relative flex items-center flex-1">

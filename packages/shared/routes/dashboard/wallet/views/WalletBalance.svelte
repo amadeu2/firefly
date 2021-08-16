@@ -35,6 +35,7 @@
         }
         &.mobile {
             padding-bottom: 0px;
+            background: transparent;
         }
         .bg-pattern {
             min-height: 234px;
@@ -75,7 +76,7 @@
         height="auto"
         src={`assets/patterns/${darkModeEnabled ? 'wallet-balance-darkmode.svg' : 'wallet-balance.svg'}`}
         alt="" />
-    {#if $walletRoute === WalletRoutes.Init}
+    {#if $walletRoute === WalletRoutes.Init || mobile}
         <!-- {#if $accounts.length > 0} 🛑 unhide here! -->
             <!-- Action Send / Receive -->
             <div class="flex flex-row justify-between space-x-4 mt-7 mb-3">

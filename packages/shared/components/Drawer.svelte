@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte'
+	import { onMount, createEventDispatcher } from 'svelte'
 	import { spring, tweened } from 'svelte/motion'
 	import * as eases from 'svelte/easing'
 	
@@ -7,6 +7,7 @@
 	export let isiOS = false
 	export let delayIn = 0
 	export let opened = false
+	const dispatch = createEventDispatcher();
 
     const sleep = ms => new Promise(r => setTimeout(r, ms))
     const is_keyboard = false // Android resize on keyboard
@@ -106,16 +107,18 @@
 	function slideIt(e) {
 		//if (is_running) return; // Block upto finish sliding
 		function end_animation({ y, pullY, corners }) {
-			unsubscribe = coordsSpring.subscribe(c => coords = c)
-			return coordsSpring.set({
+			//if (!coordsSpring) return
+			//unsubscribe = coordsSpring.subscribe(c => coords = c)
+			return coordsSpring && coordsSpring.set({
 				x: _widthSvg / 2,
 				y,
 				pullY
-			}, { hard: true }).then(() => {
+			}, { hard: true }).then(async () => {
 				isOpen = true
 				inBottom = false
+				//unsubscribe()
+				//await tick();
 				is_running = false
-				unsubscribe()
 			})
 		}
 		if (is_running) {
@@ -201,13 +204,15 @@
 	}
 
 	export async function close() {
+		console.log({is_running})
+		// if (is_running) return
+		is_running = true
 		coordsTweened = tweened({ //decided no open, curtains down!
 			x: coords.x,
 			y: coords.y, // if we change y by above code, when closes reset position to end
 			pullY: coords.pullY
 		}, { duration: 200, easing: eases.quintOut })
 		unsubscribe = coordsTweened.subscribe(c => coords = c)
-		//dispatch('opened', false);
 		await coordsTweened.set({
 			x: _widthSvg /2,
 			y: _heightSvg + config.height + ios_margin + margin_bottom, // chatbox margin bottom
@@ -215,6 +220,8 @@
 		})
 		unsubscribe()
 		is_running = isOpen = inBottom = false
+		dispatch('close');
+		
 	}
 
 	export async function fast_open() {
@@ -240,60 +247,17 @@
 	export async function open() {
 		is_running = true
 
-		await gotoAndPlay({
-			x: 0,
-			y: _heightSvg + config.height + margin_bottom, // margin bottom
-			pullY: margin_bottom
-		},
-		{
-			x: config.width * config.id,
-			y: coords.y - coords.y / 6.8 + config.height, /*its .height???*/
-			pullY: -_heightSvg / 7
-		},
-		{
-			x: config.width / 2,
-			y: coords.y - coords.y / 1.8 + config.height,
+		const coords_spring = spring({
+			y: _heightSvg,
 			pullY: -_heightSvg / 2
-		},
-		{
-			x: config.width / 2,
-			y: coords.y - coords.y / 1.8 + config.height,
-			pullY: -_heightSvg / 2
-		},
-		{
-			x: _widthSvg / 2,
+		}, { stiffness: 0.18, damping: 0.999 })
+		const unsubscribe_s = coords_spring.subscribe(c => coords = c)
+
+		await coords_spring.set({
 			y: config.height + config.marginTop,
 			pullY: -_heightSvg / pullY_ratio + config.marginTop
 		})
-		/**
-		 * @typedef {{
-		 * 	x: number,
-		 * 	y: number,
-		 * 	pullY: number,
-		 * 	duration?: undefined | number,
-		 * }} KeyFrame
-		 * @type {(
-		 * 	keyframe_1: KeyFrame,
-		 * 	keyframe_2: KeyFrame,
-		 * 	keyframe_3: KeyFrame,
-		 * 	keyframe_4: KeyFrame,
-		 * 	keyframe_5: KeyFrame,
-		 * ) => Promise<void>}
-		*/
-		async function gotoAndPlay(keyframe_1, keyframe_2, keyframe_3, keyframe_4, keyframe_5) {
-			//console.log(keyframe_1, keyframe_2, keyframe_3, keyframe_4, keyframe_5)
-
-			const coords_tweened = tweened(keyframe_1)
-			const unsubscribe_t = coords_tweened.subscribe(c => coords = c)
-			await coords_tweened.set(keyframe_2, { duration: 150 })
-			await coords_tweened.set(keyframe_3, { duration: 250 })
-			unsubscribe_t()
-			const coords_spring = spring(keyframe_4, { stiffness: 0.18, damping: 0.999 })
-			const unsubscribe_s = coords_spring.subscribe(c => coords = c)
-
-			await coords_spring.set(keyframe_5)
-			unsubscribe_s()
-		}
+		unsubscribe_s()
 
 		isOpen = true
 		inBottom = false
@@ -302,6 +266,7 @@
 	}
 
 	$: opacity_dim = -coords.pullY / 650 * 0.55
+	$: opacity = -coords.pullY / 100
 		
 </script>
 
@@ -312,23 +277,22 @@
         top: var(--t);
         bottom: 0;
         height: 100%;
-        z-index: 11;
+        z-index: 21;
         opacity: 1;
         user-select: none;
     }
 	
     content {
-        /* background-color: white; */
         position: fixed;
 		will-change: transform;
 		transform: translate(0, var(--y));
         /* overflow-y: auto;
         -webkit-overflow-scrolling: touch; */
-		border-radius: 1.5rem;
-		margin-top: 2rem;
+		border-radius: 1.5rem 1.5rem 0 0;
+		/* margin-top: 2rem; */
         min-height: 100%;
         width: 100%;
-		z-index: 8;
+		/* z-index: 8; */
 		/* display: var(--display); */
         opacity: var(--opacity);
         /* pointer-events: auto; */
@@ -376,6 +340,7 @@
 			   --mtop: {-_heightSvg + config.height + ios_margin + config.marginTop - 2}px;
 			   --top: 0;
                --direction: 'to bottom';
+			   --opacity: {opacity};
 			   --bg: {'linear-gradient(var(--direction), rgba(255,255,255,0.5), rgba(255,255,255,0))'
 		}"
     >

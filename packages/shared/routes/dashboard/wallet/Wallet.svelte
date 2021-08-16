@@ -1,5 +1,5 @@
 <script lang="typescript">
-    import { DashboardPane } from 'shared/components'
+    import { DashboardPane, Drawer } from 'shared/components'
     import { clearSendParams } from 'shared/lib/app'
     import { deepCopy } from 'shared/lib/helpers'
     import { addProfileCurrencyPriceData, priceData } from 'shared/lib/marketData'
@@ -42,6 +42,7 @@
 
     export let locale
     export let mobile
+    let drawer:Drawer
 
     const { accounts, balanceOverview, accountsLoaded, internalTransfersInProgress } = $wallet
 
@@ -573,6 +574,18 @@
             addProfileCurrencyPriceData()
         }
     })
+
+    
+    function handleDrawer() {
+        if ($walletRoute === WalletRoutes.CreateAccount) {
+            drawer.open()
+        }
+    }
+    
+    $: if (mobile && drawer) {
+        handleDrawer()
+    }
+
 </script>
 
 <style type="text/scss">
@@ -595,20 +608,25 @@
                 <!-- <DashboardPane classes="h-full"> -->
                     <!-- Total Balance, Accounts list & Send/Receive -->
                     <div class="flex flex-auto flex-col w-full">
-                        {#if $walletRoute === WalletRoutes.CreateAccount}
-                            <CreateAccount onCreate={onCreateAccount} {locale} />
-                        {:else}
                             <WalletBalance {locale} mobile />
-                            <!-- <DashboardPane classes="-mt-5 h-full z-0"> -->
-                            <WalletActions
-                                {isGeneratingAddress}
-                                send={onSend}
-                                internalTransfer={onInternalTransfer}
-                                generateAddress={onGenerateAddress}
-                                {locale}
-                                mobile />
+                            <!-- <DashboardPane classes="-mt-5 h-1/2 z-0 bg-transparent dark:bg-transparent"> -->
+                                <WalletActions
+                                    {isGeneratingAddress}
+                                    send={onSend}
+                                    internalTransfer={onInternalTransfer}
+                                    generateAddress={onGenerateAddress}
+                                    {locale}
+                                    mobile />
                             <!-- </DashboardPane> -->
-                        {/if}
+                            {#if $walletRoute === WalletRoutes.CreateAccount}
+                                <Drawer 
+                                    config={{amount: 5, id: 2, height: 100, marginTop: 70}} 
+                                    opened={false} 
+                                    bind:this={drawer}
+                                    on:close={() => walletRoute.set(WalletRoutes.Init)}>    
+                                    <CreateAccount onCreate={onCreateAccount} {locale} />
+                                </Drawer>
+                            {/if}
                     </div>
                 <!-- </DashboardPane> -->
                 <div class="flex flex-col col-span-2 h-full space-y-4">
@@ -616,7 +634,7 @@
                         <LineChart {locale} />
                     </DashboardPane> -->
                     <div class="w-full h-1/2 flex flex-row flex-1 space-x-4">
-                        <DashboardPane classes="w-full">
+                        <DashboardPane classes="w-full rounded-br-none rounded-bl-none">
                             <WalletHistory {locale} mobile />
                         </DashboardPane>
                         <!-- <DashboardPane classes="w-1/2">
